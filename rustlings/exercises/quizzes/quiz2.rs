@@ -17,6 +17,7 @@
 //   the first element is the string, the second one is the command.
 // - The output element is going to be a vector of strings.
 
+#[derive(Debug)]
 enum Command {
     Uppercase,
     Trim,
@@ -27,7 +28,50 @@ mod my_module {
     use super::Command;
 
     // TODO: Complete the function as described above.
-    // pub fn transformer(input: ???) -> ??? { ??? }
+    pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
+        // let (text, command) = input;
+        // match input {
+        //     Command::Uppercase -> "Hello".to_string(),
+        // }
+
+        let mut output = Vec::new();
+        /**
+         * Interate over vector like arr
+         * Separate string in one variable
+         * create vector variable outside of for loop
+         * Store data in that varible and return vect as a string
+         *
+         */
+        for str_command in input {
+            println!("{str_command:?}");
+            let (str_val, command_val) = str_command;
+
+            // match command_val {
+            //     Command::Uppercase => {
+            //         let upper = str_val.to_uppercase();
+            //         output.push(upper);
+            //     }
+            //     Command::Trim => {
+            //         let trim_val = str_val.trim();
+            //         output.push(trim_val.to_string());
+            //     }
+            //     Command::Append(a) => {
+            //         let append_val = str_val + &"bar".to_string().repeat(a);
+            //         print!("{append_val}");
+            //         output.push(append_val);
+            //     }
+            // }
+
+            let new_string = match command_val {
+                Command::Uppercase => str_val.to_uppercase(),
+                Command::Trim => str_val.trim().to_string(),
+                Command::Append(a) => str_val + &"bar".to_string().repeat(a),
+            };
+            output.push(new_string);
+        }
+
+        output
+    }
 }
 
 fn main() {
@@ -36,9 +80,11 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    // use crate::my_module::transformer;
+
     // TODO: What do we need to import to have `transformer` in scope?
-    // use ???;
-    use super::Command;
+    use super::{Command, my_module::*};
+    // use super::my_module::transformer;
 
     #[test]
     fn it_works() {

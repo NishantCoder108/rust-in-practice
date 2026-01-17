@@ -4,17 +4,40 @@
 // construct to `Option` that can be used to express error conditions. Change
 // the function signature and body to return `Result<String, String>` instead
 // of `Option<String>`.
-fn generate_nametag_text(name: String) -> Option<String> {
+
+// fn generate_nametag_text(name: String) -> Option<String> {
+//     if name.is_empty() {
+//         // Empty names aren't allowed
+//         None
+//     } else {
+//         Some(format!("Hi! My name is {name}"))
+//     }
+// }
+
+fn generate_nametag_text(name: String) -> Result<String, String> {
     if name.is_empty() {
         // Empty names aren't allowed
-        None
+        Err("Empty names aren't allowed".to_string())
     } else {
-        Some(format!("Hi! My name is {name}"))
+        Ok(format!("Hi! My name is {name}"))
     }
 }
 
 fn main() {
     // You can optionally experiment here.
+
+    // assert_eq!(
+    let result = generate_nametag_text("Beyoncé".to_string());
+    println!(
+        "1-Result: {:#?}, 2-Expected: {:#?}",
+        result,
+        Some("Hi! My name is Beyoncé")
+    );
+    let l = result.as_deref();
+    println!("{l:#?}");
+
+    // Some("Hi! My name is Beyoncé"),
+    // );
 }
 
 #[cfg(test)]

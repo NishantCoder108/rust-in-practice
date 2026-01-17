@@ -25,17 +25,19 @@ impl ParsePosNonzeroError {
     }
 
     // TODO: Add another error conversion function here.
-    // fn from_parse_int(???) -> Self { ??? }
+    fn from_parse_int(err: ParseIntError) -> Self {
+        Self::ParseInt(err)
+    }
 }
 
 #[derive(PartialEq, Debug)]
 struct PositiveNonzeroInteger(u64);
 
 impl PositiveNonzeroInteger {
-    fn new(value: i64) -> Result<Self, CreationError> {
+    fn new(value: i64) -> Result<Self, ParsePosNonzeroError> {
         match value {
-            x if x < 0 => Err(CreationError::Negative),
-            0 => Err(CreationError::Zero),
+            x if x < 0 => Err(ParsePosNonzeroError::Creation(CreationError::Negative)),
+            0 => Err(ParsePosNonzeroError::Creation(CreationError::Zero)),
             x => Ok(Self(x as u64)),
         }
     }
@@ -43,8 +45,16 @@ impl PositiveNonzeroInteger {
     fn parse(s: &str) -> Result<Self, ParsePosNonzeroError> {
         // TODO: change this to return an appropriate error instead of panicking
         // when `parse()` returns an error.
-        let x: i64 = s.parse().unwrap();
-        Self::new(x).map_err(ParsePosNonzeroError::from_creation)
+        // let x: i64 = s.parse().unwrap();
+        // let x = s.parse::<i64>().unwrap();
+        // Ok(Self::new(x))
+        // Self::new(x);
+        // Ok(())
+
+        match s.parse::<i64>() {
+            Ok(x) => Self::new(x),
+            Err(e) => Err(ParsePosNonzeroError::ParseInt(e)),
+        }
     }
 }
 

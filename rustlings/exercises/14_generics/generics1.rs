@@ -3,10 +3,10 @@
 // But in this exercise, the compiler needs some help through a type annotation.
 
 fn main() {
-    // TODO: Fix the compiler error by annotating the type of the vector
-    // `Vec<T>`. Choose `T` as some integer type that can be created from
-    // `u8` and `i8`.
-    let mut numbers = Vec::new();
+    // We need to specify a concrete type for T.
+    // Both u8 and i8 can be converted into i16 losslessly using `into()`.
+    // Therefore, we annotate numbers as Vec<i16>.
+    let mut numbers: Vec<i16> = Vec::new();
 
     // Don't change the lines below.
     let n1: u8 = 42;

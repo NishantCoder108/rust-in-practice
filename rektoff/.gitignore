@@ -1,0 +1,4 @@
+# ignore Rust binaries (no extension)
+*
+!*.rs
+!.gitignore

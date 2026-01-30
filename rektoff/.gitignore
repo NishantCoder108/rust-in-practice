@@ -1,4 +1,3 @@
-# ignore Rust binaries (no extension)
-*
-!*.rs
-!.gitignore
+target
+.env
+.idea

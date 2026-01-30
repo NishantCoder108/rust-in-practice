@@ -1,0 +1,31 @@
+bin = [
+  { name = "01_stack_memory_array", path = "practices/01_stack_memory_array.rs" },
+  { name = "02_stack_memory_tuples", path = "practices/02_stack_memory_tuples.rs" },
+  { name = "03_stack_heap_static_memory", path = "practices/03_stack_heap_static_memory.rs" },
+  { name = "04_dynamic_vec_growth", path = "practices/04_dynamic_vec_growth.rs" },
+  { name = "05_callstack_function_calls", path = "practices/05_callstack_function_calls.rs" },
+  { name = "06_static_memory_scope_error", path = "practices/06_static_memory_scope_error.rs" },
+  { name = "07_research_investigate_possible_memory_layouts", path = "practices/07_research_investigate_possible_memory_layouts.rs" },
+
+]
+
+
+[package]
+name = "questions"
+edition = "2024"
+# Don't publish the exercises on crates.io!
+publish = false
+
+[profile.release]
+panic = "abort"
+
+[profile.dev]
+panic = "abort"
+
+[lints.rust]
+# # You shouldn't write unsafe code here!
+# unsafe_code = "forbid"
+# # You don't need unstable features at here  and shouldn't rely on them while learning Rust.
+# unstable_features = "forbid"
+# Dead code warnings can't be avoided in some exercises and might distract while learning.
+dead_code = "allow"

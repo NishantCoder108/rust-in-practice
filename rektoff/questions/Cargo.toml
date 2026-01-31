@@ -6,7 +6,7 @@ bin = [
   { name = "05_callstack_function_calls", path = "practices/05_callstack_function_calls.rs" },
   { name = "06_static_memory_scope_error", path = "practices/06_static_memory_scope_error.rs" },
   { name = "07_research_investigate_possible_memory_layouts", path = "practices/07_research_investigate_possible_memory_layouts.rs" },
-
+  { name = "08_ownership_string", path = "practices/08_ownership_string.rs" },
 ]
 
 

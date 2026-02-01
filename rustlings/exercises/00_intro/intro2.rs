@@ -6,7 +6,9 @@ fn main() {
 
     println!("{0:_>35}, {1:_<35}", "Welcome to your Dream World!", "_");
 
-    println!("{0:_^45}", "Both side equal dash(-)")
+    println!("{:_^45}", "Both side equal dash(-)");
+
+    println!("{:>14}", "Nishant");
 
     /*
     This is multiline comment. It will just wrap up

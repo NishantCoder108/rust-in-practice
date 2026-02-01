@@ -8,6 +8,11 @@ trait Licensed {
     }
 }
 
+trait LicensedDo {
+    fn licensed_details(&self) -> String {
+        String::from("Details licensed")
+    }
+}
 struct SomeSoftware {
     version_number: i32,
 }
@@ -18,7 +23,7 @@ struct OtherSoftware {
 
 impl Licensed for SomeSoftware {} // Don't edit this line.
 impl Licensed for OtherSoftware {} // Don't edit this line.
-
+impl LicensedDo for SomeSoftware {}
 fn main() {
     // You can optionally experiment here.
 }
@@ -36,5 +41,9 @@ mod tests {
         };
         assert_eq!(some_software.licensing_info(), licensing_info);
         assert_eq!(other_software.licensing_info(), licensing_info);
+        assert_eq!(
+            some_software.licensed_details(),
+            "Details licensed".to_string()
+        )
     }
 }

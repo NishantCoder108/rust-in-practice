@@ -7,6 +7,7 @@ use solana_sdk::{
     transaction::Transaction,
 };
 use solana_system_interface::instruction::create_account;
+use spl_associated_token_account_interface::instruction::create_associated_token_account;
 use spl_token_2022_interface::{
     ID as TOKEN_2022_PROGRAM_ID,
     extension::{
@@ -15,7 +16,7 @@ use spl_token_2022_interface::{
             MetadataPointer, instruction::initialize as initialize_metadata_pointer,
         },
     },
-    instruction::initialize_mint,
+    instruction::{initialize_mint, initialize_non_transferable_mint},
     state::Mint,
 };
 use spl_token_metadata_interface::{
@@ -34,7 +35,7 @@ async fn main() -> Result<()> {
     println!("payer = {}", fee_payer.pubkey().to_string());
     // Create connection to local validator
     let client = RpcClient::new_with_commitment(
-        String::from("http://localhost:8899"),
+        String::from("http://api.devnet.solana.com"),
         CommitmentConfig::confirmed(),
     );
     let latest_blockhash = client.get_latest_blockhash().await?;
@@ -43,16 +44,16 @@ async fn main() -> Result<()> {
     // let fee_payer = Keypair::new();
 
     // Airdrop 5 SOL to fee payer
-    let airdrop_signature = client
-        .request_airdrop(&fee_payer.pubkey(), 5_000_000_000)
-        .await?;
+    // let airdrop_signature = client
+    //     .request_airdrop(&fee_payer.pubkey(), 2_000_000_000)
+    //     .await?;
 
-    loop {
-        let confirmed = client.confirm_transaction(&airdrop_signature).await?;
-        if confirmed {
-            break;
-        }
-    }
+    // loop {
+    //     let confirmed = client.confirm_transaction(&airdrop_signature).await?;
+    //     if confirmed {
+    //         break;
+    //     }
+    // }
 
     // Generate keypair for the mint
     let mint = Keypair::new();
@@ -61,15 +62,17 @@ async fn main() -> Result<()> {
     let token_metadata  = TokenMetadata {
         update_authority: Some(fee_payer.pubkey()).try_into()?,
         mint: mint.pubkey(),
-        name: "WarriorOfSol".to_string(),
-        symbol : "WOS".to_string(),
+        name: "FirstDayAtArena".to_string(),
+        symbol : "FDAA".to_string(),
         uri : "https://raw.githubusercontent.com/NishantCoder108/rust-in-practice/refs/heads/main/projects/images/metadata.json".to_string(),
-        additional_metadata: vec![("description".to_string(),"WarriorOfSOL represents builders who fight complexity with code and ship value on Solana. It symbolizes speed, decentralization, and a developer first mindset built only where performance matters most.".to_string())]
+        additional_metadata: vec![("description".to_string(),"FirstDayAtArena represents builders who fight complexity with code and ship value on Solana. It symbolizes speed, decentralization, and a developer first mindset built only where performance matters most.".to_string())]
     };
 
     // Calculate space for mint with metadata pointer and token metadata extensions
-    let mint_space =
-        ExtensionType::try_calculate_account_len::<Mint>(&[ExtensionType::MetadataPointer])?;
+    let mint_space = ExtensionType::try_calculate_account_len::<Mint>(&[
+        ExtensionType::MetadataPointer,
+        ExtensionType::NonTransferable,
+    ])?;
 
     let metadata_len = token_metadata.tlv_size_of()?;
 
@@ -86,6 +89,9 @@ async fn main() -> Result<()> {
         &TOKEN_2022_PROGRAM_ID, // program id
     );
 
+    let initialize_non_transferable_instruction =
+        initialize_non_transferable_mint(&TOKEN_2022_PROGRAM_ID, &mint.pubkey())?;
+
     // Instruction to initialize metadata pointer (pointing to itself for self-managed metadata)
     let initialize_metadata_pointer_instruction = initialize_metadata_pointer(
         &TOKEN_2022_PROGRAM_ID,
@@ -100,7 +106,7 @@ async fn main() -> Result<()> {
         &mint.pubkey(),            // mint
         &fee_payer.pubkey(),       // mint authority
         Some(&fee_payer.pubkey()), // freeze authority
-        9,                         // decimals
+        0,                         // decimals
     )?;
 
     // Instruction to initialize token metadata
@@ -132,12 +138,22 @@ async fn main() -> Result<()> {
         })
         .collect();
 
+    // Instruction to create associated token account
+    let create_ata_instruction = create_associated_token_account(
+        &fee_payer.pubkey(),    // payer
+        &fee_payer.pubkey(),    // owner
+        &mint.pubkey(),         // mint
+        &TOKEN_2022_PROGRAM_ID, // token program
+    );
+
     // Construct transaction with all instructions
     let mut instructions = vec![
         create_mint_account_instruction,
+        initialize_non_transferable_instruction,
         initialize_metadata_pointer_instruction,
         initialize_mint_instruction,
         initialize_metadata_instruction,
+        create_ata_instruction,
     ];
     instructions.extend(update_field_instructions);
 
@@ -188,3 +204,81 @@ fn keypair_from_env() -> Keypair {
 
     Keypair::from_base58_string(&key_str)
 }
+
+/*
+****---- Token logs -----*****
+
+
+payer = HiMmuCbieNgDNFd9GbcbVSHYPGPuEgZWwQxJULaJVoVs
+Mint Address: 7GGpp37MAZWLf2yBrY5ShQknYNvjrHHU6LZcdFk9pWdH
+Transaction Signature: sYzpSLR2DubpV1Shbq9Je96gdRSZERy7gxiuq8P9Q5rWzSiBtV3KcJTERPcfQUVgWjzqqYuJ59rRWKZMCCmi1Q5
+
+Extensions enabled: [NonTransferable, MetadataPointer, TokenMetadata]
+
+MetadataPointer {
+    authority: OptionalNonZeroPubkey(
+        HiMmuCbieNgDNFd9GbcbVSHYPGPuEgZWwQxJULaJVoVs,
+    ),
+    metadata_address: OptionalNonZeroPubkey(
+        7GGpp37MAZWLf2yBrY5ShQknYNvjrHHU6LZcdFk9pWdH,
+    ),
+}
+
+TokenMetadata {
+    update_authority: OptionalNonZeroPubkey(
+        HiMmuCbieNgDNFd9GbcbVSHYPGPuEgZWwQxJULaJVoVs,
+    ),
+    mint: 7GGpp37MAZWLf2yBrY5ShQknYNvjrHHU6LZcdFk9pWdH,
+    name: "WarriorOfSol",
+    symbol: "WOS",
+    uri: "https://raw.githubusercontent.com/NishantCoder108/rust-in-practice/refs/heads/main/projects/images/metadata.json",
+    additional_metadata: [
+        (
+            "description",
+            "WarriorOfSOL represents builders who fight complexity with code and ship value on Solana. It symbolizes speed, decentralization, and a developer first mindset built only where performance matters most.",
+        ),
+    ],
+}
+
+
+
+URL : https://explorer.solana.com/address/7GGpp37MAZWLf2yBrY5ShQknYNvjrHHU6LZcdFk9pWdH/metadata?cluster=devnet&customUrl=http%3A%2F%2Flocalhost%3A8899
+
+
+****---Other deploy non transferable token with metadata ----****
+
+
+payer = HiMmuCbieNgDNFd9GbcbVSHYPGPuEgZWwQxJULaJVoVs
+Mint Address: 98f3PsJWBfgbA9pbTxfVyjiSfNYancM7yutHqkkwdQLG
+Transaction Signature: 52aqH9z6dhxhqCpyGKPNJ6inAXhGrHxLSUecqeHH9j3tjvzWUQ1p4ML2La9HNBUsG6QDBMkCgUa3Z7cHrHStui8y
+
+Extensions enabled: [NonTransferable, MetadataPointer, TokenMetadata]
+
+MetadataPointer {
+    authority: OptionalNonZeroPubkey(
+        HiMmuCbieNgDNFd9GbcbVSHYPGPuEgZWwQxJULaJVoVs,
+    ),
+    metadata_address: OptionalNonZeroPubkey(
+        98f3PsJWBfgbA9pbTxfVyjiSfNYancM7yutHqkkwdQLG,
+    ),
+}
+
+TokenMetadata {
+    update_authority: OptionalNonZeroPubkey(
+        HiMmuCbieNgDNFd9GbcbVSHYPGPuEgZWwQxJULaJVoVs,
+    ),
+    mint: 98f3PsJWBfgbA9pbTxfVyjiSfNYancM7yutHqkkwdQLG,
+    name: "FirstDayAtArena",
+    symbol: "FDAA",
+    uri: "https://raw.githubusercontent.com/NishantCoder108/rust-in-practice/refs/heads/main/projects/images/metadata.json",
+    additional_metadata: [
+        (
+            "description",
+            "FirstDayAtArena represents builders who fight complexity with code and ship value on Solana. It symbolizes speed, decentralization, and a developer first mindset built only where performance matters most.",
+        ),
+    ],
+}
+
+
+
+*/

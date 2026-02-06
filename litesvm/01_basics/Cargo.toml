@@ -1,0 +1,15 @@
+[package]
+name = "basics"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+solana-address = "2.1.0"
+solana-keypair = "3.1.0"
+solana-signer = "3.0.0"
+solana-system-interface = "3.0.0"
+solana-transaction = "3.0"
+
+[dev-dependencies]
+litesvm = "0.9.1"
+solana-sdk = "3.0.0"

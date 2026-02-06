@@ -430,6 +430,7 @@ dependencies = [
  "litesvm",
  "solana-address 2.1.0",
  "solana-keypair",
+ "solana-message",
  "solana-sdk",
  "solana-signer",
  "solana-system-interface 3.0.0",

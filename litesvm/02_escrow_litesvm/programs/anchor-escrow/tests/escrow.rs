@@ -249,38 +249,114 @@ fn escrow() {
     }
 
     assert!(escrow_account.is_none(), "Vault is not exist anymore");
-}
 
-/*
+    /* Refund test */
 
-
- let program_id = address!("Logging111111111111111111111111111111111111");
-    let account_meta = AccountMeta {
-        pubkey: Address::new_unique(),
-        is_signer: false,
-        is_writable: true,
-    };
-    let ix = Instruction {
+    //Again maker for refund
+    // Create the "Make" instruction to deposit tokens into the escrow
+    let make_ix = Instruction {
+        // `Instruction::program_id` is an `Address` in this SDK
         program_id,
-        accounts: vec![account_meta],
-        data: vec![5, 10, 11, 12, 13, 14],
+        accounts: MakeAccounts {
+            maker: address_to_pubkey(maker.pubkey()),
+            mint_a: address_to_pubkey(mint_a),
+            mint_b: address_to_pubkey(mint_b),
+            maker_ata_a: address_to_pubkey(maker_ata_a),
+            escrow: escrow,
+            vault: vault,
+            associated_token_program: address_to_pubkey(asspciated_token_program),
+            token_program: address_to_pubkey(token_program),
+            system_program: system_program,
+        }
+        .to_account_metas(None)
+        .into_iter()
+        .map(|m| AccountMeta {
+            pubkey: pubkey_to_address(m.pubkey),
+            is_signer: m.is_signer,
+            is_writable: m.is_writable,
+        })
+        .collect(),
+        data: MakeIx {
+            deposit: 100,
+            seed: 123u64,
+            receive: 100,
+        }
+        .data(),
     };
-    let mut svm = LiteSVM::new();
-    let payer = Keypair::new();
-    let bytes = include_bytes!("../../node-litesvm/program_bytes/spl_example_logging.so");
-    svm.add_program(program_id, bytes);
-    svm.airdrop(&payer.pubkey(), 1_000_000_000).unwrap();
-    let blockhash = svm.latest_blockhash();
-    let msg = Message::new_with_blockhash(&[ix], Some(&payer.pubkey()), &blockhash);
-    let tx = VersionedTransaction::try_new(VersionedMessage::Legacy(msg), &[payer]).unwrap();
-    // let's sim it first
-    let sim_res = svm.simulate_transaction(tx.clone()).unwrap();
-    let meta = svm.send_transaction(tx).unwrap();
-    assert_eq!(sim_res.meta, meta);
-    assert_eq!(meta.logs[1], "Program log: static string");
-    assert!(meta.compute_units_consumed < 10_000)
 
-*/
+    let recent_blockhash = svm.latest_blockhash();
+    let transaction = Transaction::new_signed_with_payer(
+        &[make_ix],
+        Some(&maker.pubkey()),
+        &[&maker],
+        recent_blockhash,
+    );
+
+    // Send the transaction and capture the result
+    let tx = svm.send_transaction(transaction).unwrap();
+
+    println!("Tx sign : {:?}", tx);
+    // Log transaction details
+    msg!("\n\nAgain Maker transaction sucessfull");
+    let refund_ix = Instruction {
+        // `Instruction::program_id` is an `Address` in this SDK
+        program_id,
+        accounts: Refund {
+            // taker: address_to_pubkey(taker.pubkey()),
+            maker: address_to_pubkey(maker.pubkey()),
+            mint_a: address_to_pubkey(mint_a),
+            maker_ata_a: address_to_pubkey(maker_ata_a),
+            escrow: escrow,
+            vault: vault,
+            token_program: address_to_pubkey(token_program),
+            system_program: system_program,
+        }
+        .to_account_metas(None)
+        .into_iter()
+        .map(|m| AccountMeta {
+            pubkey: pubkey_to_address(m.pubkey),
+            is_signer: m.is_signer,
+            is_writable: m.is_writable,
+        })
+        .collect(),
+        data: RefundIx {}.data(),
+    };
+
+    let recent_blockhash = svm.latest_blockhash();
+    let transaction = Transaction::new_signed_with_payer(
+        &[refund_ix],
+        Some(&maker.pubkey()),
+        &[&maker],
+        recent_blockhash,
+    );
+
+    // Send the transaction and capture the result
+    let tx = svm.send_transaction(transaction).unwrap();
+
+    println!("Tx sign : {:?}", tx);
+    // Log transaction details
+    msg!("\n\nRefund transaction sucessfull");
+
+    // Fetch the updated escrow account to verify it was closed/refunded
+    let escrow_account_post_refund = svm.get_account(&pubkey_to_address(escrow));
+    assert!(
+        escrow_account_post_refund.is_none()
+            || escrow_account_post_refund.as_ref().unwrap().lamports == 0,
+        "Escrow account should be closed or have zero lamports after refund"
+    );
+
+    // Check that the maker's associated token account received the refund (balance increased)
+    let ata_account = svm.get_account(&(maker_ata_a)).unwrap();
+    let ata_balance =
+        anchor_spl::token::TokenAccount::try_deserialize(&mut ata_account.data.as_slice())
+            .unwrap()
+            .amount;
+    assert_eq!(
+        ata_balance,
+        1000000000 - 10,
+        "Maker's ATA should have 1,000 tokens after refund"
+    );
+}
 
 fn address_to_pubkey(add: Address) -> Pubkey {
     Pubkey::new_from_array(add.to_bytes())

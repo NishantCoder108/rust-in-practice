@@ -1,8 +1,12 @@
 use {
-    anchor_escrow::{accounts::Make as MakeAccounts, instruction::Make as MakeIx},
+    anchor_escrow::{
+        accounts::{Make as MakeAccounts, Refund, Take},
+        instruction::{Make as MakeIx, Refund as RefundIx, Take as TakeIx},
+        program::AnchorEscrow,
+        state::Escrow,
+    },
     anchor_lang::{
-        prelude::msg, solana_program::example_mocks::solana_rpc_client::rpc_client::RpcClient,
-        InstructionData, ToAccountMetas,
+        prelude::msg, AccountDeserialize, AnchorDeserialize, InstructionData, ToAccountMetas,
     },
     anchor_spl::associated_token::{self, get_associated_token_address},
     litesvm::LiteSVM,
@@ -13,8 +17,8 @@ use {
     solana_instruction::{account_meta::AccountMeta, Instruction},
     solana_keypair::{read_keypair_file, Keypair},
     // solana_message::Instruction,
-    solana_message::{Message, VersionedMessage},
-    solana_native_token::LAMPORTS_PER_SOL,
+    // solana_message::{Message, VersionedMessage},
+    // solana_native_token::LAMPORTS_PER_SOL,
     solana_pubkey::Pubkey,
     solana_sdk_ids::system_program::ID as SYSTEM_PROGRAM_ID,
     solana_signer::Signer,
@@ -67,7 +71,7 @@ fn escrow() {
         .unwrap();
 
     let mint_b = CreateMint::new(&mut svm, &maker)
-        .authority(&maker.pubkey())
+        .authority(&taker.pubkey())
         .decimals(6)
         .send()
         .unwrap();
@@ -163,11 +167,88 @@ fn escrow() {
     // Log transaction details
     msg!("\n\nMake transaction sucessfull");
 
+    let escrow_account = svm.get_account(&pubkey_to_address(escrow)).unwrap();
+    println!("Escrow Account : {:?}", escrow_account);
+
+    // let escrow_data = MakeIx::deserialize(&mut escrow_account.data.as_ref()).unwrap();
+    let escrow_state = Escrow::try_deserialize(&mut escrow_account.data.as_slice()).unwrap();
+
     // // Check the balance
     // let balance = svm.get_balance(&user.pubkey()).unwrap();
     // assert_eq!(balance, 1_000_000_000);
 
-    // println!("Account funded with {} SOL", balance as f64 / 1e9);
+    println!("{:?}", escrow_state);
+
+    println!("seed: {}", escrow_state.seed);
+    // println!("deposit: {}", escrow_data.deposit);
+    println!("receive: {}", escrow_state.receive);
+    // assert_eq!(10u64, escrow_data.deposit, "Escrow data deposit value");
+    assert_eq!(123, escrow_state.seed, "Escrow data seed");
+    assert_eq!(
+        10u64, escrow_state.receive,
+        "Escrow expected received value"
+    );
+
+    /*Tests for taker */
+    // Mint 1,000 tokens (with 6 decimal places) of Mint A to the maker's associated token account
+    MintTo::new(&mut svm, &taker, &mint_b, &taker_ata_b, 1000000000)
+        .send()
+        .unwrap();
+
+    let take_ix = Instruction {
+        // `Instruction::program_id` is an `Address` in this SDK
+        program_id,
+        accounts: Take {
+            taker: address_to_pubkey(taker.pubkey()),
+            maker: address_to_pubkey(maker.pubkey()),
+            mint_a: address_to_pubkey(mint_a),
+            mint_b: address_to_pubkey(mint_b),
+            taker_ata_a: address_to_pubkey(taker_ata_a),
+            taker_ata_b: address_to_pubkey(taker_ata_b),
+            maker_ata_b: address_to_pubkey(maker_ata_b),
+            escrow: escrow,
+            vault: vault,
+            associated_token_program: address_to_pubkey(asspciated_token_program),
+            token_program: address_to_pubkey(token_program),
+            system_program: system_program,
+        }
+        .to_account_metas(None)
+        .into_iter()
+        .map(|m| AccountMeta {
+            pubkey: pubkey_to_address(m.pubkey),
+            is_signer: m.is_signer,
+            is_writable: m.is_writable,
+        })
+        .collect(),
+        data: TakeIx {}.data(),
+    };
+
+    let recent_blockhash = svm.latest_blockhash();
+    let transaction = Transaction::new_signed_with_payer(
+        &[take_ix],
+        Some(&taker.pubkey()),
+        &[&taker],
+        recent_blockhash,
+    );
+
+    // Send the transaction and capture the result
+    let tx = svm.send_transaction(transaction).unwrap();
+
+    println!("Tx sign : {:?}", tx);
+    // Log transaction details
+    msg!("\n\nTake transaction sucessfull");
+
+    // After take, escrow account should not exist anymore (should be None)
+    let escrow_addr = pubkey_to_address(escrow);
+    let escrow_account = svm.get_account(&escrow_addr);
+
+    if escrow_account.is_none() {
+        println!("Escrow account does not exist anymore after take. (as expected)");
+    } else {
+        println!("Escrow account still exists: {:?}", escrow_account);
+    }
+
+    assert!(escrow_account.is_none(), "Vault is not exist anymore");
 }
 
 /*

@@ -4,7 +4,7 @@
 use anchor_lang::prelude::*;
 
 mod instructions;
-mod state;
+pub mod state;
 // mod tests;
 
 use instructions::*;

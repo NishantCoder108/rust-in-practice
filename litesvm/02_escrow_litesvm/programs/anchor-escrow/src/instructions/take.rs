@@ -1,5 +1,11 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked, CloseAccount, close_account}};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_interface::{
+        close_account, transfer_checked, CloseAccount, Mint, TokenAccount, TokenInterface,
+        TransferChecked,
+    },
+};
 
 use crate::state::Escrow;
 
@@ -10,28 +16,28 @@ pub struct Take<'info> {
     pub taker: Signer<'info>,
     #[account(mut)]
     pub maker: SystemAccount<'info>,
-    pub mint_a: InterfaceAccount<'info, Mint>,
-    pub mint_b: InterfaceAccount<'info, Mint>,
+    pub mint_a: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_b: Box<InterfaceAccount<'info, Mint>>,
     #[account(
         init_if_needed,
         payer = taker,
         associated_token::mint = mint_a,
         associated_token::authority = taker,
     )]
-    pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
+    pub taker_ata_a: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(
         mut,
         associated_token::mint = mint_b,
         associated_token::authority = taker,
     )]
-    pub taker_ata_b: InterfaceAccount<'info, TokenAccount>,
+    pub taker_ata_b: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(
         init_if_needed,
         payer = taker,
         associated_token::mint = mint_b,
         associated_token::authority = maker,
     )]
-    pub maker_ata_b: InterfaceAccount<'info, TokenAccount>,
+    pub maker_ata_b: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(
         mut,
         close = maker,
@@ -41,13 +47,13 @@ pub struct Take<'info> {
         seeds = [b"escrow", maker.key().as_ref(), escrow.seed.to_le_bytes().as_ref()],
         bump = escrow.bump,
     )]
-    pub escrow: Account<'info, Escrow>,
+    pub escrow: Box<Account<'info, Escrow>>,
     #[account(
         mut,
         associated_token::mint = mint_a,
         associated_token::authority = escrow,
     )]
-    pub vault: InterfaceAccount<'info, TokenAccount>,
+    pub vault: Box<InterfaceAccount<'info, TokenAccount>>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
@@ -77,7 +83,7 @@ impl<'info> Take<'info> {
             b"escrow",
             self.maker.key.as_ref(),
             &self.escrow.seed.to_le_bytes()[..],
-            &[self.escrow.bump]
+            &[self.escrow.bump],
         ]];
 
         let cpi_program = self.token_program.to_account_info();

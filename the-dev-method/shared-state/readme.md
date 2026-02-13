@@ -1,4 +1,4 @@
-### 1. What is Mutex ?
+### What is Mutex ?
 
 > It has two rules for understanding.
 >
@@ -8,3 +8,5 @@
 > ---
 >
 > Locks the data -> Works with data -> If done with data -> unlock the data
+>
+> - Mutex care only one thread can access at a time. No other threads will be able to read or write.

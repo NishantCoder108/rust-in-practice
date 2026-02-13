@@ -1,6 +1,32 @@
 use std::sync::Mutex;
+use std::thread;
 
-/* Using Mutex - in single threaded context */
+/* 2) Shared a value with mulitple threads */
+
+fn main() {
+    let counter = Mutex::new(0);
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let handle = thread::spawn(move || {
+            /*value is moved from first thread and still trying to access it ,so that reason giving error */
+            let mut num = counter.lock().unwrap();
+
+            *num += 1;
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap(); /*When we use join, it will wait for thread finished their job. It will check sequentially, might be other thread have already worked done. */
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
+    /*We can't move ownership in multiple threads */
+}
+
+/*
+/* 1) Using Mutex - in single threaded context */
 fn main() {
     let n = Mutex::new(9);
 
@@ -23,3 +49,4 @@ fn main() {
 
     */
 }
+*/

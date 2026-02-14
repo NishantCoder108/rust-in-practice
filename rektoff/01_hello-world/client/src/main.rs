@@ -5,6 +5,7 @@ use std::rc::Rc;
 
 declare_program!(hello_world); //(reads IDL automatically)
 
+//It automatically provide types by idl
 use hello_world::{ID, accounts::NewAccount, client::accounts, client::args};
 
 #[tokio::main]
@@ -16,13 +17,13 @@ async fn main() -> anyhow::Result<()> {
 
     let client = Client::new_with_options(
         Cluster::Localnet,
-        Rc::new(&client_keypair),
+        Rc::new(&client_keypair), //RC: Multiple ownership at single thread
         CommitmentConfig::confirmed(),
     );
 
-    let program = client.program(ID)?;
+    let program = client.program(ID)?; //Accessing program id
 
-    let new_account = Keypair::new();
+    let new_account = Keypair::new(); //New account where data is storing and accessing 
     let new_account_pubkey = &new_account.pubkey();
 
     println!("\nSend transaction with initialize and increment instructions");
@@ -52,3 +53,21 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+/*
+****----Important Notes----****
+
+1. Wrote program using Anchor
+2. Deploy on localnet or devnet or mainnet-beta
+3. Interact with program using Rust as a client
+
+---
+
+logs:
+
+Send transaction with initialize and increment instructions
+   Transaction confirmed: 3EC8q3KAycpMj96Hf6nsLgebDVvgz25JWxWiCWbyhL2k82GGpT9wLex7VcTKefD4nLfCSRuUqt6i2ZQybUT35WUL
+
+Fetch counter account data
+
+*/

@@ -22,4 +22,4 @@ Rust provides a few building blocks for shared state:
 - **Mutex** — Ensure only one thread accesses data at a time
 
 For a friendly, detailed guide,  
-👉 [See my full notes on Arc, Rc, and Mutex here.](./shared-state/readme.md)
+👉 [See my full notes on Arc, Rc, and Mutex here.](./00_shared-state/readme.md)

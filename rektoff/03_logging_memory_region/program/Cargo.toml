@@ -1,0 +1,4 @@
+[package]
+name = "solana_logger_client"
+version.workspace = true
+edition.workspace = true

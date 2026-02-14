@@ -31,6 +31,8 @@ pub fn process_instruction(
 
     match instruction_data[0] {
         0 => log_memory_regions(instruction_data),
+        1 => attempt_uaf(),
+        2 => attempt_buffer_overflow(),
         _ => Err(ProgramError::InvalidInstructionData),
     }
 }
@@ -66,6 +68,44 @@ fn log_memory_regions(instruction_data: &[u8]) -> ProgramResult {
         "log_memory_regions address: {:p}",
         log_memory_regions as *const ()
     );
+
+    Ok(())
+}
+
+fn attempt_uaf() -> ProgramResult {
+    msg!("Attempting UAF");
+
+    let x = Box::new(5);
+    msg! {"Value before free: {}", *x};
+    let raw_x = Box::into_raw(x);
+
+    unsafe {
+        drop(Box::from_raw(raw_x));
+        msg!("Value after free: {}", *raw_x);
+    }
+
+    Ok(())
+}
+
+fn attempt_buffer_overflow() -> ProgramResult {
+    let mut buffer = [0u8; 5];
+    let not_in_buffer = 56789;
+
+    unsafe {
+        let ptr = buffer.as_mut_ptr();
+
+        for i in 0..6 {
+            *ptr.add(i) = i as u8;
+            msg!("writing {} at:          {:p}", i, ptr.add(i));
+        }
+    }
+
+    msg!("");
+    msg!("buffer address:        {:p}", &buffer);
+    msg!("not_in_buffer address: {:p}", &not_in_buffer);
+
+    msg!("buffer: {:?}", buffer);
+    msg!("not_in_buffer: {}", not_in_buffer);
 
     Ok(())
 }

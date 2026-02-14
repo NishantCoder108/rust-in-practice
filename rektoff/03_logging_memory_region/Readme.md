@@ -25,3 +25,7 @@
     resolver = "2"
 
    ```
+
+4. Build : `cargo-build-sbf`
+5. Deploy : `solana program deploy ./target/deploy/loggi.so`
+6. Received `program_id` and `signature`. Program id will be use at client side for interacting.

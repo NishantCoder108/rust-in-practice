@@ -1,4 +1,18 @@
 [package]
-name = "solana_logger_client"
+name = "logging_memory_region_program"
 version.workspace = true
 edition.workspace = true
+
+[dependencies]
+solana-program = "3.0.0"
+
+[lib]
+crate-type = [
+    "cdylib",
+] #This line produce .so file , when we build program `cargo-build-sbf`
+
+
+[profile.release] #It used for optimization
+lto = true        # link time optimization
+opt-level = "s"   #size optimization
+codegen-units = 1 #compile everything in one unit

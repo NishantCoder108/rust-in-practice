@@ -33,7 +33,7 @@ fn main() -> Result<()> {
         program_id,
         accounts: vec![],
         // data: vec![],
-        data: vec![0],
+        data: vec![1],
     };
 
     // Create message and transaction
@@ -81,4 +81,47 @@ Logs from 5pqhvcrJaBBTSbExrTPXtUSWLmfrm1GgcH4M6J8Jii2V7NEGoVWERzwkXJR3khzjZbktiv
   Program log: log_memory_regions address: 0x100000698
   Program DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM consumed 5056 of 200000 compute units
   Program DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM success
+
+
+
+  *******Buffer Overflow Logs*********
+
+  Invoking program: DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM
+Transaction succeeded! Signature: kpbM3yhkwj6pudhW9QJyvZQsvzHDBBZc7RHHb1RAVfds6ec8Z4tUedBwMyPzsrVtJVagvrQnHz4WhKoAby248aC
+Logs from kpbM3yhkwj6pudhW9QJyvZQsvzHDBBZc7RHHb1RAVfds6ec8Z4tUedBwMyPzsrVtJVagvrQnHz4WhKoAby248aC:
+  Program DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM invoke [1]
+  Program log: Hello, world!
+  Program log: This is a simple logging program for learning.
+  Program log: Program executed successfully!
+  Program log: writing 0 at:          0x200002f7f
+  Program log: writing 1 at:          0x200002f80
+  Program log: writing 2 at:          0x200002f81
+  Program log: writing 3 at:          0x200002f82
+  Program log: writing 4 at:          0x200002f83
+  Program log: writing 5 at:          0x200002f84
+  Program log:
+  Program log: buffer address:        0x200002f7f
+  Program log: not_in_buffer address: 0x200002f84
+  Program log: buffer: [0, 1, 2, 3, 4]
+  Program log: not_in_buffer: 56581
+  Program DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM consumed 7869 of 200000 compute uni
+
+
+
+  ********* UAF *******
+  - Some time it give unexpected behaviour and sometimes not
+
+  Invoking program: DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM
+Transaction succeeded! Signature: 5mhNahCVLtw3ncaHgGXqfG8iS67afLwBkSzbrcAahve2tdzxkDjk298smNnB6W3WCkFVrzmLwJfTciZ2sFbZEoDA
+Logs from 5mhNahCVLtw3ncaHgGXqfG8iS67afLwBkSzbrcAahve2tdzxkDjk298smNnB6W3WCkFVrzmLwJfTciZ2sFbZEoDA:
+  Program DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM invoke [1]
+  Program log: Hello, world!
+  Program log: This is a simple logging program for learning.
+  Program log: Program executed successfully!
+  Program log: Attempting UAF
+  Program log: Value before free: 5
+  Program log: Value after free: 5
+  Program DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM consumed 1354 of 200000 compute units
+  Program DTKiRRtmJeqBAPUP8KuGZFCNf2UzuAvKYTULdcatMgEM success
+
 */

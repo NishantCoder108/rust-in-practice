@@ -29,12 +29,25 @@ pub fn process_instruction(
         return Ok(());
     }
 
-    match instruction_data[0] {
-        0 => log_memory_regions(instruction_data),
-        1 => attempt_uaf(),
-        2 => attempt_buffer_overflow(),
-        _ => Err(ProgramError::InvalidInstructionData),
+    // Allow any non-empty instruction_data, not just 0.
+    match instruction_data.get(0) {
+        Some(0) => log_memory_regions(instruction_data),
+        Some(1) => attempt_uaf(),
+        Some(2) => attempt_buffer_overflow(),
+        Some(_) => {
+            msg!("Unrecognized instruction value: {}", instruction_data[0]);
+            Err(ProgramError::InvalidInstructionData)
+        }
+        None => {
+            msg!("No instruction data provided.");
+            Err(ProgramError::InvalidInstructionData)
+        }
     }
+    // 0 => log_memory_regions(instruction_data),
+    // 1 => attempt_uaf(),
+    // 2 => attempt_buffer_overflow(),
+    // _ => Err(ProgramError::InvalidInstructionData),
+    // }
 }
 
 fn log_memory_regions(instruction_data: &[u8]) -> ProgramResult {

@@ -25,3 +25,7 @@
 
      Signature: 2s7xZyq3qoHM7WrJaVSgLggL158qvaT5VBu4VNKrpCmrMuWPznPQscs6YHmS4EKvHLBPFkkxSihZoLTHvbaP18Y3
      ```
+
+---
+
+Resources: https://github.com/dkcumming/solana-contact-memory/commit/00ecee7fb32ad1c43ab0c50086fc225362438e80

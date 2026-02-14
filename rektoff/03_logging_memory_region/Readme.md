@@ -29,3 +29,7 @@
 4. Build : `cargo-build-sbf`
 5. Deploy : `solana program deploy ./target/deploy/loggi.so`
 6. Received `program_id` and `signature`. Program id will be use at client side for interacting.
+
+---
+
+Resources: https://github.com/dkcumming/solana-contact-memory/commit/0c4abec5447dafce5cc176b41b3dfa4a7155f4cd#diff-569c4866ec743e47bcc4258ec42720e55d00c382c8bc859b2916a4fe4f2ae030

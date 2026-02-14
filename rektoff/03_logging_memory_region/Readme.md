@@ -32,4 +32,9 @@
 
 ---
 
-Resources: https://github.com/dkcumming/solana-contact-memory/commit/0c4abec5447dafce5cc176b41b3dfa4a7155f4cd#diff-569c4866ec743e47bcc4258ec42720e55d00c382c8bc859b2916a4fe4f2ae030
+### Resources:
+
+https://github.com/dkcumming/solana-contact-memory/commit/0c4abec5447dafce5cc176b41b3dfa4a7155f4cd#diff-569c4866ec743e47bcc4258ec42720e55d00c382c8bc859b2916a4fe4f2ae030
+
+**How string store in memory**:
+https://play.rust-lang.org/?version=stable&mode=debug&edition=2024&gist=b4bd05b0ca30466d4f6b20732691c1cf

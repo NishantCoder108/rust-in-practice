@@ -34,6 +34,7 @@ pub fn process_instruction(
         Some(0) => log_memory_regions(instruction_data),
         Some(1) => attempt_uaf(),
         Some(2) => attempt_buffer_overflow(),
+        Some(3) => dangling_pointer(),
         Some(_) => {
             msg!("Unrecognized instruction value: {}", instruction_data[0]);
             Err(ProgramError::InvalidInstructionData)
@@ -119,6 +120,31 @@ fn attempt_buffer_overflow() -> ProgramResult {
 
     msg!("buffer: {:?}", buffer);
     msg!("not_in_buffer: {}", not_in_buffer);
+
+    Ok(())
+}
+
+fn dangling_pointer() -> ProgramResult {
+    msg!("Attempting Dangling Pointer");
+
+    let ptr: *const u8;
+    {
+        let array = [0xAA, 0xBB, 0xCC, 0xDD];
+        ptr = array.as_ptr();
+        msg!("Pointer created at: {:p}", ptr);
+        // Use read_volatile to force the compiler to not optimize out the initialization
+        unsafe {
+            core::ptr::read_volatile(ptr);
+        }
+    } // `array` is dropped here
+
+    // Read after drop
+    unsafe {
+        msg!("Reading dangling pointer:");
+        // volatile read to ensure it actually happens despite optimizations
+        let val = core::ptr::read_volatile(ptr);
+        msg!("Value: {:x}", val);
+    }
 
     Ok(())
 }

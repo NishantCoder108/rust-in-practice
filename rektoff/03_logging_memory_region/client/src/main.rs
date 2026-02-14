@@ -33,7 +33,14 @@ fn main() -> Result<()> {
         program_id,
         accounts: vec![],
         // data: vec![],
-        data: vec![1],
+        data: vec![4],
+        /*
+        Instruction:
+        0 -> log memory log_memory_regions
+        1 -> attempt uaf (unexpected behaviour)
+        2 -> attempt buffer Overflow
+        3 -> dangling pointer
+        */
     };
 
     // Create message and transaction

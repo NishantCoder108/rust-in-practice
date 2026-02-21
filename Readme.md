@@ -1,1 +1,1 @@
-### Experiment with Rust
+### Experiment with Solana & Rust

@@ -1,9 +1,9 @@
+use hey_nishant::HeyNishant;
 use my_macro::Hello;
 
-#[derive(Hello)]
+#[derive(Hello, HeyNishant)]
 struct User;
 
 fn main() {
-    println!("Hello, world!");
-    User::hello();
+    User::hey();
 }

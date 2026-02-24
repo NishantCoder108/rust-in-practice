@@ -1,10 +1,7 @@
 [workspace]
-members = ["my_macro", "app"]
-
-
-# [package]
-# name = "procedural-macro-ground"
-# version = "0.1.0"
-# edition = "2024"
-
-# [dependencies]
+members = ["my_macro", "app", "hey_nishant"]
+# The `resolver` field specifies the version of Cargo's dependency resolver to use.
+# Currently, valid values are "1" (the original resolver) and "2" (the improved resolver since Rust 1.51).
+# If you put "3" or "4", Cargo will give you an error because those versions do not exist as of now.
+# For more info: https://doc.rust-lang.org/cargo/reference/resolver.html
+resolver = "3"

@@ -6,7 +6,17 @@ version = 4
 name = "app"
 version = "0.1.0"
 dependencies = [
+ "hey_nishant",
  "my_macro",
+]
+
+[[package]]
+name = "hey_nishant"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

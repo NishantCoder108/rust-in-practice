@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 my_macro = { path = "../my_macro" }
+hey_nishant = { path = "../hey_nishant" }

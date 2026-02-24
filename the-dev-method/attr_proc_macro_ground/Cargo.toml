@@ -1,0 +1,4 @@
+[workspace]
+members = ["app","my_attr_macro"]
+
+resolver = "3"

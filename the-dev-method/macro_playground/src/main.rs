@@ -14,7 +14,7 @@
 // }
 
 macro_rules! my_vec {
-    ( $( $x:expr ),* ) => {
+    ( $( $x:expr );* ) => {
         {
             let mut temp = Vec::new();
             $(
@@ -26,7 +26,7 @@ macro_rules! my_vec {
 }
 
 fn main() {
-    let v = my_vec![1, 2, 3];
+    let v = my_vec![1; 2; 3];
     println!("{:?}", v);
 }
 

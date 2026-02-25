@@ -4,7 +4,7 @@ use syn::parse_macro_input;
 
 #[proc_macro_attribute]
 pub fn log_call(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(item as ItemFn);
+    let input = parse_macro_input!(item as Expr);
 
     let name = &input.sig.ident;
     let block = &input.block;

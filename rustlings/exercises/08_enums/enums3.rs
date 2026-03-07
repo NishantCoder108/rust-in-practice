@@ -19,6 +19,7 @@ struct State {
     // RGB color composed of red, green and blue.
     color: (u8, u8, u8),
     quit: bool,
+    space: bool,
 }
 
 impl State {

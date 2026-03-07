@@ -21,7 +21,9 @@ custom-panic = []
 
 
 [dependencies]
-anchor-lang = "0.32.1"
+anchor-lang = {version = "0.32.1", features = ["init-if-needed"]}
+litesvm = "0.9.1"
+solana-sdk = "4.0.0"
 
 
 [lints.rust]

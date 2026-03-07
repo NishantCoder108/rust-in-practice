@@ -1,0 +1,21 @@
+addon "svm" {
+    rpc_api_url = input.rpc_api_url
+    network_id = input.network_id
+}
+
+signer "sender" "svm::secret_key" {
+    keypair_json = "~/.config/solana/id.json"
+}
+
+variable "program"{
+    value = svm::get_program_from_anchor_project("counter")
+}
+
+action "increment" "svm::process_process_instruction" {
+    signer = [signer.sender]
+    instruction{
+        program_idl = variable.program_idl
+       
+    }
+}
+

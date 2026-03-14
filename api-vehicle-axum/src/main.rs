@@ -4,13 +4,14 @@ use axum::{
 };
 
 mod vehicle;
+use vehicle::{vehicle_get, vehicle_post};
 
 #[tokio::main]
 async fn main() {
     //Create route
     let router01 = Router::new()
-        .route("/", get(vehicle::vehicle_get))
-        .route("/", post(vehicle::vehicle_post));
+        .route("/", get(vehicle_get))
+        .route("/", post(vehicle_post));
 
     //ip address  and listen the port
     let address = "0.0.0.0:3000";

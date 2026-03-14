@@ -1,4 +1,7 @@
-use axum::{debug_handler, extract::Json};
+use axum::{
+    debug_handler,
+    extract::{Json, Query},
+};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -20,8 +23,20 @@ pub async fn vehicle_get() -> Json<Vehicle> {
     })
 }
 
-#[debug_handler]
-pub async fn vehicle_post(Json(mut v): Json<Vehicle>) -> Json<Vehicle> {
+//For passing inside body, we can use JSON
+// #[debug_handler]
+// pub async fn vehicle_post(Json(mut v): Json<Vehicle>) -> Json<Vehicle> {
+//     println!(
+//         "Manufacturer: {}, Model: {}, Year: {}",
+//         v.manufacturer, v.model, v.year
+//     );
+//     v.id = Some(Uuid::new_v4().to_string());
+
+//     Json(v)
+// }
+
+//For using query parameters, we can use extract::Query
+pub async fn vehicle_post(Query(mut v): Query<Vehicle>) -> Json<Vehicle> {
     println!(
         "Manufacturer: {}, Model: {}, Year: {}",
         v.manufacturer, v.model, v.year

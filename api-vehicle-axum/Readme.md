@@ -33,10 +33,15 @@ curl -X POST http://localhost:3000
  ```
 #### Send a POST request with JSON data
  ```bash
-    curl -v  -X POST http://localhost:3000 \
+curl -v  -X POST http://localhost:3000 \
     -H "Content-Type: application/json" \
     -d '{"manufacturer":"Bullet","model":"Classic500","year":2024}'
  ```
+
+### Send a POST request with query parameters
+```bash
+curl -X POST "http://localhost:3000?manufacturer=Bullet&model=Classic500&year=2024"
+```
 
 
 ### Important commands for setup project

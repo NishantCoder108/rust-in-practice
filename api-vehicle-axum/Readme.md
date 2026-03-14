@@ -38,9 +38,14 @@ curl -v  -X POST http://localhost:3000 \
     -d '{"manufacturer":"Bullet","model":"Classic500","year":2024}'
  ```
 
-### Send a POST request with query parameters
+#### Send a POST request with query parameters
 ```bash
 curl -X POST "http://localhost:3000?manufacturer=Bullet&model=Classic500&year=2024"
+```
+
+### Send a Post request with multiple query parameters
+```bash
+curl -X POST "http://localhost:3000?manufacturer=Bullet&model=Classic500&year=2024&last_name=musk&first_name=elon"
 ```
 
 

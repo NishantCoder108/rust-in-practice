@@ -7,25 +7,30 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+mod event;
 mod user;
-use user::{login_user, register_user};
-
+use crate::event::Event;
 use crate::user::User;
+use event::{event_create, get_events};
+use user::{login_user, register_user};
 
 pub struct AppState {
     users: Mutex<HashMap<String, User>>,
+    events: Mutex<Vec<Event>>,
 }
 
 #[tokio::main]
 async fn main() {
     let app_state = Arc::new(AppState {
         users: Mutex::new(HashMap::new()),
+        events: Mutex::new(Vec::new()),
     });
     let app = Router::new()
         .route("/v1/register", post(register_user))
         .route("/v1/login", post(login_user))
+        .route("/v1/event", post(event_create))
+        .route("/v1/events", get(get_events))
         .with_state(app_state);
-    // .route("/v1/events", get(events_get))
     // .route("/v1/event/:id", get(event_get))
     // .route("/v1/event/:id", put(event_put))
     // .route("/v1/event/:id", delete(event_delete));

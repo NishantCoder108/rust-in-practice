@@ -2,14 +2,29 @@ use axum::{
     Router,
     routing::{get, post},
 };
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
 
 mod user;
-use user::register_user;
+use user::{login_user, register_user};
+
+use crate::user::User;
+
+pub struct AppState {
+    users: Mutex<HashMap<String, User>>,
+}
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/v1/register", post(register_user));
-    // .route("/v1/register", post(login_user))
+    let app_state = Arc::new(AppState {
+        users: Mutex::new(HashMap::new()),
+    });
+    let app = Router::new()
+        .route("/v1/register", post(register_user))
+        .route("/v1/login", post(login_user))
+        .with_state(app_state);
     // .route("/v1/events", get(events_get))
     // .route("/v1/event/:id", get(event_get))
     // .route("/v1/event/:id", put(event_put))

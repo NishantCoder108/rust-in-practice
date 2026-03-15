@@ -31,7 +31,7 @@ async fn main() {
         .route("/v1/event", post(event_create))
         .route("/v1/events", get(get_events))
         .route("/v1/event/{id}", get(get_event_by_id))
-        .route("/v1/event", put(update_event)) //replace whole resource
+        .route("/v1/event", put(update_event)) //replace whole field
         .route("/v1/event/{id}", delete(delete_event))
         .with_state(app_state);
 

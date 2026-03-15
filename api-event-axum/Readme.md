@@ -151,3 +151,10 @@ curl -X DELETE http://localhost:3000/v1/event/f1234b13-59b8-4813-9983-95b7b88152
 ```bash
 curl http://localhost:3000/v1/event/f1234b13-59b8-4813-9983-95b7b8815246 | jq
 ```
+
+#### Update Event
+```bash
+curl -X PUT http://localhost:3000/v1/event \
+   -H "Content-Type: application/json" \
+   -d '{"title":"Rust Session","description":"A session on Rust programming language","date":"2024-07-01T10:00:00Z","location":"online","meet_url":"https://meet.google.com/","organizer":"nishant", "id":"ba839650-c98f-4ded-a132-81c815d1bebd"}' | jq
+```

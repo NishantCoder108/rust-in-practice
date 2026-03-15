@@ -1,7 +1,7 @@
 use crate::AppState;
 use axum::{
     Json as JsonResponse, debug_handler,
-    extract::{Json, State},
+    extract::{Json, Path, State},
 };
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -27,7 +27,6 @@ pub async fn event_create(
     })
 }
 
-#[debug_handler]
 pub async fn get_events(
     State(app_state): State<Arc<AppState>>,
 ) -> JsonResponse<GetAllEventsResponse> {
@@ -41,6 +40,34 @@ pub async fn get_events(
     })
 }
 
+#[debug_handler]
+pub async fn get_event_by_id(
+    State(app_state): State<Arc<AppState>>,
+    Path(id): Path<String>,
+) -> JsonResponse<GetEventResponse> {
+    println!("Event id: {}", id);
+
+    let event_state = app_state.events.lock().unwrap();
+
+    let event = event_state
+        .iter()
+        .find(|e| e.id == Some(id.clone()))
+        .cloned();
+
+    println!("Event by Id: {:?}", event);
+
+    if let Some(event) = event {
+        return JsonResponse(GetEventResponse {
+            message: String::from("Event retrieved successfully"),
+            event: Some(event),
+        });
+    } else {
+        return JsonResponse(GetEventResponse {
+            message: "Event not found".to_string(),
+            event: None,
+        });
+    }
+}
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Event {
     id: Option<String>,
@@ -63,4 +90,10 @@ pub struct GetAllEventsResponse {
     total_events: usize,
     message: String,
     events: Vec<Event>,
+}
+
+#[derive(Serialize)]
+pub struct GetEventResponse {
+    message: String,
+    event: Option<Event>,
 }

@@ -1,6 +1,6 @@
-use crate::AppState;
+use crate::{AppState, user::CurrentUser};
 use axum::{
-    Json as JsonResponse, debug_handler,
+    Extension, Json as JsonResponse, debug_handler,
     extract::{Json, Path, State},
 };
 use serde::{Deserialize, Serialize};
@@ -8,11 +8,13 @@ use std::sync::Arc;
 use uuid::Uuid;
 
 pub async fn event_create(
+    Extension(user): Extension<CurrentUser>,
     State(app_state): State<Arc<AppState>>,
     Json(mut event): Json<Event>,
 ) -> JsonResponse<EventResponse> {
     println!("Events request: {:?}", event);
     println!("Event State: {:?}", app_state.events);
+    println!("Current User: {:?}", user);
     println!("{:_^24}", "_");
 
     let mut event_state = app_state.events.lock().unwrap();

@@ -72,6 +72,7 @@ pub async fn login_user(
 
     let claims = Claims {
         sub: user_data.username.to_string(),
+        role: user_data.role.clone(),
         exp: exp as usize,
     };
 
@@ -117,14 +118,21 @@ pub struct UserLoginResponse {
     message: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-enum Role {
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum Role {
     ADMIN,
     USER,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-    sub: String,
-    exp: usize,
+pub struct Claims {
+    pub sub: String,
+    pub role: Role,
+    pub exp: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct CurrentUser {
+    pub username: String,
+    pub role: Role,
 }

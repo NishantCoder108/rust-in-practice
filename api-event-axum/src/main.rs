@@ -1,6 +1,6 @@
 use axum::{
     Router,
-    routing::{delete, get, post},
+    routing::{delete, get, post, put},
 };
 use std::{
     collections::HashMap,
@@ -11,7 +11,7 @@ mod event;
 mod user;
 use crate::event::Event;
 use crate::user::User;
-use event::{delete_event, event_create, get_event_by_id, get_events};
+use event::{delete_event, event_create, get_event_by_id, get_events, update_event};
 use user::{login_user, register_user};
 
 pub struct AppState {
@@ -31,15 +31,12 @@ async fn main() {
         .route("/v1/event", post(event_create))
         .route("/v1/events", get(get_events))
         .route("/v1/event/{id}", get(get_event_by_id))
+        .route("/v1/event", put(update_event)) //replace whole resource
         .route("/v1/event/{id}", delete(delete_event))
         .with_state(app_state);
-    // .route("/v1/event/:id", put(event_put))
-    // .route("/v1/event/:id", delete(event_delete));
 
-    //ip address  and listen the port
     let address = "0.0.0.0:3000";
     let listener = tokio::net::TcpListener::bind(address).await.unwrap();
 
-    //serve the port and runnning the application
     axum::serve(listener, app).await.unwrap();
 }

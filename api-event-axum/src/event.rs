@@ -40,7 +40,6 @@ pub async fn get_events(
     })
 }
 
-#[debug_handler]
 pub async fn get_event_by_id(
     State(app_state): State<Arc<AppState>>,
     Path(id): Path<String>,
@@ -68,7 +67,53 @@ pub async fn get_event_by_id(
         });
     }
 }
+
 #[debug_handler]
+pub async fn update_event(
+    State(app_state): State<Arc<AppState>>,
+    Json(event_req): Json<UpdateEventRequest>,
+) -> JsonResponse<EventResponse> {
+    println!("Update event id: {}", event_req.id);
+
+    let mut event_state = app_state.events.lock().unwrap();
+
+    if let Some(event) = event_state
+        .iter_mut()
+        .find(|e| e.id.as_deref() == Some(&event_req.id))
+    {
+        if let Some(title) = event_req.title {
+            event.title = title;
+        }
+        if let Some(description) = event_req.description {
+            event.description = description;
+        }
+        if let Some(date) = event_req.date {
+            event.date = date;
+        }
+        if let Some(location) = event_req.location {
+            event.location = location;
+        }
+        if let Some(meet_url) = event_req.meet_url {
+            event.meet_url = meet_url;
+        }
+        if let Some(organizer) = event_req.organizer {
+            event.organizer = organizer;
+        }
+
+        println!("Updated event: {:?}", event);
+
+        return JsonResponse(EventResponse {
+            id: event.id.clone().unwrap_or_default(),
+            message: String::from("Event updated successfully"),
+        });
+    } else {
+        return JsonResponse(EventResponse {
+            id: event_req.id,
+            message: String::from("Event not found"),
+        });
+    }
+}
+
 pub async fn delete_event(
     State(app_state): State<Arc<AppState>>,
     Path(id): Path<String>,
@@ -89,6 +134,7 @@ pub async fn delete_event(
         });
     }
 }
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Event {
     id: Option<String>,
@@ -98,6 +144,16 @@ pub struct Event {
     location: String,
     meet_url: String,
     organizer: String,
+}
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct UpdateEventRequest {
+    id: String,
+    title: Option<String>,
+    description: Option<String>,
+    date: Option<String>,
+    location: Option<String>,
+    meet_url: Option<String>,
+    organizer: Option<String>,
 }
 
 #[derive(Serialize)]

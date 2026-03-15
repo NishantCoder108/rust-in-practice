@@ -118,11 +118,26 @@ DELETE /v1/event/fjsf-34f
   "message": "Event deleted successfully"
 }
 ```
-
+---
 ### Curl command for testing API
+#### Login test
 ```bash
 curl -X POST http://localhost:3000/v1/login  \
    -H "Content-Type: application/json" \
    -d '{"name":"Nishant","username":"nishant","role":"ADMIN","id":"nishant@solaa.com", "password":"13444"}' | jq
 ```
 - jq : a JSON processor that formats JSON output for readability.
+
+#### Event test creation
+```bash
+
+curl -X POST http://localhost:3000/v1/event  \
+   -H "Content-Type: application/json" \
+   -d '{"title":"Rust Session","description":"A session on Rust programming language","date":"2024-07-01T10:00:00Z","location":"online","meet_url":"https://meet.google.com/","organizer":"nishant"}' | jq
+
+```
+
+#### Event test get all events
+```bash
+curl http://localhost:3000/v1/events | jq
+```

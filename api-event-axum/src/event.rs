@@ -27,6 +27,20 @@ pub async fn event_create(
     })
 }
 
+#[debug_handler]
+pub async fn get_events(
+    State(app_state): State<Arc<AppState>>,
+) -> JsonResponse<GetAllEventsResponse> {
+    let event_state = app_state.events.lock().unwrap();
+
+    println!("Events: {:?}", event_state);
+    JsonResponse(GetAllEventsResponse {
+        total_events: event_state.len(),
+        message: String::from("Events retrieved successfully"),
+        events: event_state.clone(),
+    })
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Event {
     id: Option<String>,
@@ -42,4 +56,11 @@ pub struct Event {
 pub struct EventResponse {
     id: String,
     message: String,
+}
+
+#[derive(Serialize)]
+pub struct GetAllEventsResponse {
+    total_events: usize,
+    message: String,
+    events: Vec<Event>,
 }

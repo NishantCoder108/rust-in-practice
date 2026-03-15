@@ -68,6 +68,27 @@ pub async fn get_event_by_id(
         });
     }
 }
+#[debug_handler]
+pub async fn delete_event(
+    State(app_state): State<Arc<AppState>>,
+    Path(id): Path<String>,
+) -> JsonResponse<EventResponse> {
+    let mut event_state = app_state.events.lock().unwrap();
+    let event = event_state.iter().position(|e| e.id == Some(id.clone()));
+
+    if let Some(pos) = event {
+        let deleted_event = event_state.remove(pos);
+        return JsonResponse(EventResponse {
+            id: deleted_event.id.unwrap(),
+            message: String::from("Event deleted successfully"),
+        });
+    } else {
+        return JsonResponse(EventResponse {
+            id: id,
+            message: String::from("Event not found"),
+        });
+    }
+}
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Event {
     id: Option<String>,

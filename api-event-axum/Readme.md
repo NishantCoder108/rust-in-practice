@@ -141,3 +141,13 @@ curl -X POST http://localhost:3000/v1/event  \
 ```bash
 curl http://localhost:3000/v1/events | jq
 ```
+
+#### Delete event test
+```bash
+curl -X DELETE http://localhost:3000/v1/event/f1234b13-59b8-4813-9983-95b7b8815246 | jq
+```
+
+#### Event test get by id
+```bash
+curl http://localhost:3000/v1/event/f1234b13-59b8-4813-9983-95b7b8815246 | jq
+```

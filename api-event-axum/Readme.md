@@ -18,7 +18,7 @@ Input:
 
 For register request:
 {
-  "id": "hti-34o",
+  "id": "nishant@solana.com",
   "name": "Nishant",
   "username": "nishant",
   "role": "ADMIN",
@@ -26,7 +26,7 @@ For register request:
 }
 -> Response:
 { 
-  "id": "hti-34o",
+  "username": "nishant",
   "message": "User registered successfully"
 }
 
@@ -118,3 +118,11 @@ DELETE /v1/event/fjsf-34f
   "message": "Event deleted successfully"
 }
 ```
+
+### Curl command for testing API
+```bash
+curl -X POST http://localhost:3000/v1/login  \
+   -H "Content-Type: application/json" \
+   -d '{"name":"Nishant","username":"nishant","role":"ADMIN","id":"nishant@solaa.com", "password":"13444"}' | jq
+```
+- jq : a JSON processor that formats JSON output for readability.

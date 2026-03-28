@@ -10,7 +10,7 @@ fn main() {
 
     let numbers = Vec::from_iter(0..=1000);
 
-    let t = thread::spawn(move || {
+    let t = thread::spawn(move || { //using move keyword to transfer ownership of numbers or any variable to the thread
         let len = numbers.len();
         let sum = numbers.iter().sum::<usize>();
         sum / len
@@ -27,6 +27,9 @@ fn main() {
 fn f() {
     println!("Hello from another thread!");
 
-    let id = thread::current().id();
+    let thread = thread::current();
+    let id = &thread.id();
+    let thread_name = thread.name();
     println!("This is my thread id: {id:?}");
+    println!("This is my thread name: {thread_name:?}");
 }

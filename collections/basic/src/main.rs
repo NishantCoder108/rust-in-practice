@@ -92,6 +92,34 @@ fn main() {
     }
 
     println!("I2: {i2:?}");
+
+    println!();
+    println!("{:-^50}", "Multiple Types at Vector");
+    println!();
+
+    #[derive(Debug)]
+    enum Spreadsheet {
+        Text(String),
+        Int(i32),
+        Float(f32),
+        Bool(bool),
+    };
+
+    let s1 = Spreadsheet::Text("Nishant".to_string());
+    let s2 = Spreadsheet::Bool(false);
+    let s3 = Spreadsheet::Int(-23);
+    let s4 = Spreadsheet::Float(0.3);
+
+    let mut mt = vec![];
+
+    println!("{mt:?}");
+
+    mt.push(s1);
+    mt.push(s2);
+    mt.push(s3);
+    mt.push(s4);
+
+    println!("Multiple types at vector: {mt:?}");
 }
 
 #[derive(Debug)]
@@ -137,4 +165,10 @@ Vectors:
  By index: It could be panic
 
 4. Iteration:
+ - iter() and &a -> both are same to accessing element, just to give reference
+ - iter_mut() and &mut a -> both are similar but it mutate the data, in-memory
+
+5. Multiple Types:
+ - For adding multiple types inside one single vector, we can create `enum` and their we can give multiple types
+
 */

@@ -5,6 +5,10 @@ fn main() {
 
     //for update
 
+    vec.push(34);
+
+    println!("Vec: {vec:?}");
+
     // let mut vec = vec![];
 
     // vec.push(4);
@@ -26,5 +30,10 @@ Vectors:
  - Vec::new();
 
  //For creating variable or defining some value so for that we can use `vec![]` or `Vec::new()`
+
+
+2. Updating: -
+ - push(value)
+ - required `mut` keyword
 
 */

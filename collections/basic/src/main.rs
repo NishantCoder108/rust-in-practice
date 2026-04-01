@@ -43,6 +43,55 @@ fn main() {
     v4.push(e1);
 
     println!("{v4:?}");
+    println!();
+    println!("{:-^50}", "Accessing Elements at VEC");
+    println!();
+
+    let v5 = vec![2, 3, 5];
+    let f1 = v5[0];
+    println!("F1: {f1:?}");
+    println!("V5: {v5:?}");
+    let f4 = &v5[2];
+    println!("F4: {f4:?}");
+
+    // Accessing by get method ///
+    let g1 = v5.get(0);
+    println!("{g1:?}");
+
+    let g2 = v5.get(4);
+    println!("{g2:?}");
+
+    let g = [2, 4, 5];
+    println!("G:{:?}", g.get(2));
+
+    println!();
+    println!("{:-^50}", "Iteration on Vec");
+    println!();
+
+    // By For loop at Immutable referecen
+
+    let i1 = vec![2, 4, 5];
+    for ele in i1 {
+        println!("Ele: {ele:?}");
+    }
+
+    // println!("I1 : {i1:?}"); //borrow of moved value, its ownership is just goes to i1, so here it can't accesss it
+
+    // For accessing it after for looping...
+    let mut i2 = Vec::new();
+    i2.push(2);
+    i2.push(3);
+    i2.push(4);
+
+    println!("I2: {i2:?}");
+
+    for item in &i2 {
+        // i2.iter() or &i2 -> both are reference to the same things
+        // *item += 1;
+        println!("Item: {item:?}");
+    }
+
+    println!("I2: {i2:?}");
 }
 
 #[derive(Debug)]
@@ -81,7 +130,11 @@ Vectors:
  e.g. Vec<i32> :- i32 types will be inside this vector. vector is nothing but it just store dynamic elements that can increase or decrease at runtime.
 
 3. Accessing:-
- -
+ - By index eg. v[0]
+ - By get e.g   v.get(index)
 
+ get method : It provides two things - Some or None
+ By index: It could be panic
 
+4. Iteration:
 */

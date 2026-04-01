@@ -132,6 +132,26 @@ fn main() {
             _ => println!("Unknown"),
         }
     }
+
+    println!();
+    println!("{:-^50}", "Strings");
+    println!();
+
+    //Creation:
+
+    let mut s = String::new();
+    s.push('a');
+    s.push_str("string");
+    println!("{s:?}");
+
+    let fs1 = format!("Format string, without taking ownership, it convert into single string");
+    println!("FS1: {:?}", fs1);
+
+    let s3 = String::from("From String");
+    let s4 = "To String".to_string();
+    let s5 = s3 + &s4; //we can not add two string slice. when we `+` concate two string to single string so it will convert into single string
+
+    println!("S5: {:?}", s5);
 }
 
 #[derive(Debug)]
@@ -188,4 +208,9 @@ Vectors:
  - It's variable size can be `shrink` or `grow` during runtime
  - When we relocate the variablw, it create a new space and point to that location.
  - If collection (vector, strings, hashmap) goes out of scope , space will be freed automatically.
+
+
+
+String:
+
 */

@@ -183,4 +183,9 @@ Vectors:
 5. Multiple Types:
  - For adding multiple types inside one single vector, we can create `enum` and their we can give multiple types
 
+
+6. Heap Allocated:
+ - It's variable size can be `shrink` or `grow` during runtime
+ - When we relocate the variablw, it create a new space and point to that location.
+ - If collection (vector, strings, hashmap) goes out of scope , space will be freed automatically.
 */

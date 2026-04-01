@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn main() {
     let arr = [1, 2, 3, 3, 4, 4]; //store inside the stack instead of heap
     let mut vec: Vec<i32> = Vec::new();
@@ -152,6 +154,23 @@ fn main() {
     let s5 = s3 + &s4; //we can not add two string slice. when we `+` concate two string to single string so it will convert into single string
 
     println!("S5: {:?}", s5);
+
+    println!();
+    println!("{:-^50}", "Hash Maps");
+    println!();
+
+    let mut hash: HashMap<&str, &str> = HashMap::new();
+    hash.insert("hello", "world");
+
+    let mut hash_count: HashMap<&str, u32> = HashMap::new();
+
+    hash_count.entry("hello").or_insert(0);
+    // hash_count.entry("hello").or_insert(1);
+    let mut val = hash_count.entry("hello").or_insert(8);
+    *val += 3;
+
+    println!("{val:?}");
+    println!("Hash: {:?}", hash_count);
 }
 
 #[derive(Debug)]

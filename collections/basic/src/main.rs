@@ -120,6 +120,18 @@ fn main() {
     mt.push(s4);
 
     println!("Multiple types at vector: {mt:?}");
+
+    for ele in &mt {
+        // println!("ELE: {ele:?}");
+
+        match ele {
+            Spreadsheet::Bool(ele) => println!("{}", ele),
+            Spreadsheet::Float(ele) => println!("{}", ele),
+            Spreadsheet::Int(ele) => println!("{}", ele),
+            Spreadsheet::Text(ele) => println!("{}", ele),
+            _ => println!("Unknown"),
+        }
+    }
 }
 
 #[derive(Debug)]

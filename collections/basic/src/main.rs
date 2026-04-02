@@ -171,6 +171,19 @@ fn main() {
 
     println!("{val:?}");
     println!("Hash: {:?}", hash_count);
+
+    let mystring = "abckdjfjiwoefijfsdjfnishant";
+
+    let mut my_hash = HashMap::new();
+
+    for ch in mystring.chars() {
+        // println!("Character: {ch:?}");
+
+        let k = my_hash.entry(ch).or_insert(0);
+        *k += 1;
+    }
+
+    println!("My Hash: {:#?}", my_hash);
 }
 
 #[derive(Debug)]

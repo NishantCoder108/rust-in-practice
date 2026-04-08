@@ -20,8 +20,14 @@ fn main() {
         println!("Sent message from thread.");
     });
 
-    let message = receiver.recv().unwrap();
-    println!("Main thread got data : {}", message);
+    for res_data in receiver {
+        println!("Received message : {res_data:?}");
+    }
+    // while let Ok(res) = receiver.recv() {
+    //     println!("Received Mess: {res:?}");
+    // }
+    // let message = receiver.recv().unwrap();
+    // println!("Main thread got data : {}", message);
 
     // let handler = thread::spawn(|| {
     //     println!("Handler");

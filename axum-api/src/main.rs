@@ -6,9 +6,35 @@ use axum::{
 async fn hello() -> String {
     return "hello world".to_string();
 }
+
+async fn index() -> &'static str {
+    "Home"
+}
+
+async fn about() -> &'static str {
+    "About"
+}
+
+async fn signup() -> &'static str {
+    "Signup"
+}
+
+async fn list_users() -> &'static str {
+    "list users"
+}
+
+async fn create_user() -> &'static str {
+    "Create User"
+}
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", get(|| async { "Hellow, World!" }));
+    // let g = || async { "Hellow, World!" };
+    let app = Router::new()
+        .route("/", get(index))
+        .route("/hello", get(hello))
+        .route("/about", get(about))
+        .route("/signup", post(signup))
+        .route("/users", get(list_users).post(create_user));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 

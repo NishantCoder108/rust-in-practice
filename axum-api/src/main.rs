@@ -46,15 +46,22 @@ async fn update_user() -> &'static str {
 async fn delete_user() -> &'static str {
     "Delete user"
 }
+
+async fn health_route() -> &'static str {
+    "Health Route"
+}
 #[tokio::main]
 async fn main() {
     let user_routes = Router::new()
         .route("/", get(list_users).post(create_user))
         .route("/{id}", get(get_user).put(update_user).delete(delete_user));
 
-    let app = Router::new()
-        .nest("/v1/api/users", user_routes)
-        .route("/{*path}", get(not_found));
+    let health_routes = Router::new().route("/health", get(health_route));
+    // let app = Router::new()
+    //     .nest("/v1/api/users", user_routes)
+    //     .route("/{*path}", get(not_found));
+
+    let app = Router::new().merge(user_routes).merge(health_routes);
     // let g = || async { "Hellow, World!" };
     // let app = Router::new()
     //     .route("/", get(index))

@@ -1,68 +1,91 @@
 use axum::{
-    Router,
+    Json, Router,
+    http::StatusCode,
+    response::Html,
     routing::{delete, get, post},
 };
 
-async fn hello() -> String {
-    return "hello world".to_string();
+// async fn hello() -> String {
+//     return "hello world".to_string();
+// }
+
+// async fn index() -> &'static str {
+//     "Home"
+// }
+
+// async fn about() -> &'static str {
+//     "About"
+// }
+
+// async fn signup() -> &'static str {
+//     "Signup"
+// }
+
+// async fn list_users() -> &'static str {
+//     "list users"
+// }
+
+// async fn create_user() -> &'static str {
+//     "Create User"
+// }
+
+// async fn get_user() -> &'static str {
+//     "Get User by id"
+// }
+
+// async fn serve_file() -> &'static str {
+//     "Serve file by path"
+// }
+
+// async fn not_found() -> &'static str {
+//     "Not found"
+// }
+
+// async fn update_user() -> &'static str {
+//     "Update user"
+// }
+
+// async fn delete_user() -> &'static str {
+//     "Delete user"
+// }
+
+// async fn health_route() -> &'static str {
+//     "Health Route"
+// }
+
+async fn plain_text() -> &'static str {
+    "Plain Text"
 }
 
-async fn index() -> &'static str {
-    "Home"
+async fn no_content() -> StatusCode {
+    StatusCode::NO_CONTENT
 }
 
-async fn about() -> &'static str {
-    "About"
+async fn page() -> Html<&'static str> {
+    Html(
+        "<div> <h1> Hello Nishant</h1> <p> What's going on? Are you Rust backend Developer </p></div>",
+    )
 }
 
-async fn signup() -> &'static str {
-    "Signup"
-}
+async fn json_data() -> Json<serde_json::Value> {}
 
-async fn list_users() -> &'static str {
-    "list users"
-}
-
-async fn create_user() -> &'static str {
-    "Create User"
-}
-
-async fn get_user() -> &'static str {
-    "Get User by id"
-}
-
-async fn serve_file() -> &'static str {
-    "Serve file by path"
-}
-
-async fn not_found() -> &'static str {
-    "Not found"
-}
-
-async fn update_user() -> &'static str {
-    "Update user"
-}
-
-async fn delete_user() -> &'static str {
-    "Delete user"
-}
-
-async fn health_route() -> &'static str {
-    "Health Route"
-}
 #[tokio::main]
 async fn main() {
-    let user_routes = Router::new()
-        .route("/", get(list_users).post(create_user))
-        .route("/{id}", get(get_user).put(update_user).delete(delete_user));
-
-    let health_routes = Router::new().route("/health", get(health_route));
-
-    let merge_routes = Router::new().merge(user_routes).merge(health_routes);
-
     let app = Router::new()
-        .nest("/v1/api/users", merge_routes)
-        .route("/{*path}", get(not_found));
+        .route("/", get(plain_text))
+        .route("/no-content", get(no_content))
+        .route("/page", get(page));
+    // let user_routes = Router::new()
+    //     .route("/", get(list_users).post(create_user))
+    //     .route("/{id}", get(get_user).put(update_user).delete(delete_user));
+
+    // let health_routes = Router::new().route("/health", get(health_route));
+
+    // let merge_routes = Router::new().merge(user_routes).merge(health_routes);
+
+    // let app = Router::new()
+    //     .nest("/v1/api/users", merge_routes)
+    //     .route("/{*path}", get(not_found));
 
     // let g = || async { "Hellow, World!" };
     // let app = Router::new()

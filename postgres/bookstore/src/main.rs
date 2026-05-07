@@ -7,10 +7,11 @@ use sqlx::{Connection, Row, types::Text};
 // This enables flexible error handling by boxing different kinds of errors into a single return type.
 async fn main() -> Result<(), Box<dyn Error>> {
     let url = "postgres://dbuser:mysecretpassword@localhost:5432/bookstore";
-    let mut conn = sqlx::postgres::PgConnection::connect(url).await?;
+    // let mut conn = sqlx::postgres::PgConnection::connect(url).await?;
+    let pool = sqlx::PgPool::connect(url).await?;
 
     let res = sqlx::query("SELECT 'Nishant' as name")
-        .fetch_one(&mut conn)
+        .fetch_one(&pool)
         .await?;
 
     let name: String = res.get("name");

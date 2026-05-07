@@ -4,3 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+# Features explanation:
+# - "postgres": Enables PostgreSQL database support in sqlx.
+# - "runtime-tokio-rustls": Sets the async runtime to Tokio and uses Rustls for TLS, enabling secure async database connections.
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio-rustls"] }
+tokio = { version = "1.52.2", features = ["full"] }

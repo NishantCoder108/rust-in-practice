@@ -1,5 +1,6 @@
 use axum::{
     Json, Router,
+    extract::Path,
     http::StatusCode,
     response::Html,
     routing::{delete, get, post},
@@ -21,13 +22,13 @@ use axum::{
 //     "Signup"
 // }
 
-// async fn list_users() -> &'static str {
-//     "list users"
-// }
+async fn list_users() -> &'static str {
+    "list users"
+}
 
-// async fn create_user() -> &'static str {
-//     "Create User"
-// }
+async fn create_user() -> &'static str {
+    "Create User"
+}
 
 // async fn get_user() -> &'static str {
 //     "Get User by id"
@@ -37,21 +38,21 @@ use axum::{
 //     "Serve file by path"
 // }
 
-// async fn not_found() -> &'static str {
-//     "Not found"
-// }
+async fn not_found() -> &'static str {
+    "Not found"
+}
 
-// async fn update_user() -> &'static str {
-//     "Update user"
-// }
+async fn update_user(Path(id): Path<u64>) -> String {
+    format!("Updated Users: {id}")
+}
 
-// async fn delete_user() -> &'static str {
-//     "Delete user"
-// }
+async fn delete_user() -> &'static str {
+    "Delete user"
+}
 
-// async fn health_route() -> &'static str {
-//     "Health Route"
-// }
+async fn health_route() -> &'static str {
+    "Health Route"
+}
 
 async fn plain_text() -> &'static str {
     "Plain Text"
@@ -67,25 +68,39 @@ async fn page() -> Html<&'static str> {
     )
 }
 
-async fn json_data() -> Json<serde_json::Value> {}
+// async fn json_data() -> Json<serde_json::Value> {}
 
+async fn get_user(Path(id): Path<u64>) -> String {
+    format!("User #{id}")
+}
+
+// Multiple path params
+async fn get_comment(Path((post_id, comment_id)): Path<(u64, u64)>) -> String {
+    print!("pointer is comming here...");
+    format!("Post {post_id}, Comment {comment_id}")
+}
+
+async fn get_health_post_route(Path())
 #[tokio::main]
 async fn main() {
-    let app = Router::new()
-        .route("/", get(plain_text))
-        .route("/no-content", get(no_content))
-        .route("/page", get(page));
-    // let user_routes = Router::new()
-    //     .route("/", get(list_users).post(create_user))
-    //     .route("/{id}", get(get_user).put(update_user).delete(delete_user));
-
-    // let health_routes = Router::new().route("/health", get(health_route));
-
-    // let merge_routes = Router::new().merge(user_routes).merge(health_routes);
-
     // let app = Router::new()
-    //     .nest("/v1/api/users", merge_routes)
-    //     .route("/{*path}", get(not_found));
+    //     .route("/", get(plain_text))
+    //     .route("/no-content", get(no_content))
+    //     .route("/page", get(page))
+    //     .route("/{id}", get(get_user));
+    let user_routes = Router::new()
+        .route("/", get(list_users).post(create_user))
+        .route("/{id}", get(get_user).put(update_user).delete(delete_user));
+
+    let health_routes = Router::new().route("/health", get(health_route));
+    let merge_routes = Router::new().merge(user_routes).merge(health_routes);
+
+    let blog_routes = Router::new().route("/{post_id}/comment/{comment_id}", get(get_comment));
+
+    let app = Router::new()
+        .nest("/v1/api/users", merge_routes)
+        .nest("/v1/api/posts", blog_routes)
+        .route("/{*path}", get(not_found));
 
     // let g = || async { "Hellow, World!" };
     // let app = Router::new()

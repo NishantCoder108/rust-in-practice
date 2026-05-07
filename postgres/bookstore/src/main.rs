@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use sqlx::{Connection, Row};
+use sqlx::{Connection, Row, types::Text};
 
 #[tokio::main]
 // The `Box<dyn Error>` type allows the function to return any error type that implements the `Error` trait.
@@ -9,12 +9,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let url = "postgres://dbuser:mysecretpassword@localhost:5432/bookstore";
     let mut conn = sqlx::postgres::PgConnection::connect(url).await?;
 
-    let res = sqlx::query("SELECT  1 + 1 as sum")
+    let res = sqlx::query("SELECT 'Nishant' as name")
         .fetch_one(&mut conn)
         .await?;
 
-    let sum: i32 = res.get("sum");
-    println!("1 + 1 = {}", sum);
+    let name: String = res.get("name");
+    println!("Name = {}", name);
 
     Ok(())
 }
@@ -27,9 +27,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   $ docker run -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=dbuser -e POSTGRES_DB=bookstore  -p 5432:5432 postgres
   database  username  password  Host   Port  dbname
- protocol://user:password@host:port/database
+  protocol://user:password@host:port/database
 
 5. Run query to test connection db
 
-5.
+6. Run command at terminal to see logs:
+  `cargo run -q`
+
+7.
 */

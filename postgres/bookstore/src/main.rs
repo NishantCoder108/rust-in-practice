@@ -2,6 +2,7 @@ use std::error::Error;
 
 use sqlx::{Connection, Row, types::Text};
 
+#[derive(Debug)]
 struct Book {
     pub title: String,
     pub author: String,
@@ -33,6 +34,21 @@ async fn update(book: &Book, isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<
 
     Ok(())
 }
+
+async fn read(pool: &sqlx::PgPool) -> Result<Book, Box<dyn Error>> {
+    let q = "SELECT title, author, isbn FROM book";
+    let query = sqlx::query(q);
+
+    let row = query.fetch_one(pool).await?;
+
+    let book = Book {
+        title: row.get("title"),
+        author: row.get("author"),
+        isbn: row.get("isbn"),
+    };
+
+    Ok(book)
+}
 #[tokio::main]
 // The `Box<dyn Error>` type allows the function to return any error type that implements the `Error` trait.
 // This enables flexible error handling by boxing different kinds of errors into a single return type.
@@ -42,11 +58,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let pool = sqlx::PgPool::connect(url).await?;
     sqlx::migrate!("./migrations").run(&pool).await?; //add migration to to do
 
+    //creating
     let book = Book {
         title: "Atomic Habits".to_string(),
         author: "James clear".to_string(),
         isbn: "978-1847941831".to_string(),
     };
+
+    // create(&book, &pool).await?;
 
     //updating
     let book = Book {
@@ -55,13 +74,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
         isbn: "978-1847941831".to_string(),
     };
 
-    update(&book, &book.isbn, &pool).await?;
+    // update(&book, &book.isbn, &pool).await?;
+
+    //reading
+    let read_book = read(&pool).await?;
+    println!("Books : {:?}", read_book);
+
     /*
     ---- For creating ---
     create(&book, &pool).await?;
 
     ---- For updating ----
-    update()
+    update(&book, &book.isbn, &pool).await?;
+
+    ---- Reading -----
      */
 
     // let res = sqlx::query("SELECT 'Nishant' as name")
@@ -134,5 +160,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
    2. To see, we go inside sql and run command to see all data
    `SELECT * FROM book;`
 
+   3. Created sql query  for create, update and read
+   4. Tested with command as well as from this main file
+
+
+   Ref: https://github.com/dreamsofcode-io/rust-sqlx
 
 */

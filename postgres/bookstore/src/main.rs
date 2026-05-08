@@ -104,4 +104,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 ----- SQLx Data writing -----
    1. Create struct and query the table
+   2. To see, we go inside sql and run command to see all data
+   `SELECT * FROM book;`
+
+
 */

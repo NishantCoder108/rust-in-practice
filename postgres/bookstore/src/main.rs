@@ -21,6 +21,18 @@ async fn create(book: &Book, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>> 
     Ok(())
 }
 
+async fn update(book: &Book, isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>> {
+    let query = "UPDATE book SET title = $1, author = $2 WHERE isbn = $3";
+
+    sqlx::query(query)
+        .bind(&book.title)
+        .bind(&book.author)
+        .bind(&book.isbn)
+        .execute(pool)
+        .await?;
+
+    Ok(())
+}
 #[tokio::main]
 // The `Box<dyn Error>` type allows the function to return any error type that implements the `Error` trait.
 // This enables flexible error handling by boxing different kinds of errors into a single return type.
@@ -36,7 +48,22 @@ async fn main() -> Result<(), Box<dyn Error>> {
         isbn: "978-1847941831".to_string(),
     };
 
-    // create(&book, &pool).await?;
+    //updating
+    let book = Book {
+        title: "Deep work".to_string(),
+        author: "Cal Newport".to_string(),
+        isbn: "978-1847941831".to_string(),
+    };
+
+    update(&book, &book.isbn, &pool).await?;
+    /*
+    ---- For creating ---
+    create(&book, &pool).await?;
+
+    ---- For updating ----
+    update()
+     */
+
     // let res = sqlx::query("SELECT 'Nishant' as name")
     //     .fetch_one(&pool)
     //     .await?;

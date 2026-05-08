@@ -9,12 +9,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let url = "postgres://dbuser:mysecretpassword@localhost:5432/bookstore";
     // let mut conn = sqlx::postgres::PgConnection::connect(url).await?;
     let pool = sqlx::PgPool::connect(url).await?;
+    sqlx::migrate!("./migrations").run(&pool).await?; //add migration to to do
 
     let res = sqlx::query("SELECT 'Nishant' as name")
         .fetch_one(&pool)
         .await?;
 
     let name: String = res.get("name");
+
+    let rows = sqlx::query("SELECT * FROM book").fetch_all(&pool).await?;
+
+    println!("{:?}", rows);
     println!("Name = {}", name);
 
     Ok(())
@@ -35,5 +40,33 @@ async fn main() -> Result<(), Box<dyn Error>> {
 6. Run command at terminal to see logs:
   `cargo run -q`
 
-7.
+7. We install`cargo install  sqlx-cli` for migrations
+8. Run command for query : ` sqlx migrate add books_table`
+9. Go to sql file and write own migratin script
+10. Add migration at main file , with db connection
+11. two things, if we have already add in main file or we run sqlx run at external
+12. So, after all done and everything fine
+
+13. We are running sql in docker form so we need to go inside to see what is happening
+  1. docker ps
+  2. now enter the container
+  `docker exec -it awesome_poincare psql -U dbuser  -d bookstore`
+
+  -U -> user name of this connection in docker
+  -d -> database
+
+  3. so now, we are inside db
+  4. Type command `\dt` to list all tables in the current database along with their schema, name, type, and owner.
+    \dt or \d  -> Display tables
+    \l  -> list
+    \du  -> display users
+    \q -> quit
+
+  5. So, if we only changes inside migration file and if we run `cargo run ` or `cargo build` , it will do nothing
+    so, we can create a new build script file, for every time we call or run , this script will be executed
+    https://docs.rs/sqlx/latest/sqlx/macro.migrate.html
+
+    `sqlx migrate build-script`
+
+
 */

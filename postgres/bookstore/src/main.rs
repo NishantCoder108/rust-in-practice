@@ -22,7 +22,7 @@ async fn create(book: &Book, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>> 
     Ok(())
 }
 
-async fn update(book: &Book, isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>> {
+async fn update(book: &Book, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>> {
     let query = "UPDATE book SET title = $1, author = $2 WHERE isbn = $3";
 
     sqlx::query(query)
@@ -74,7 +74,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         isbn: "978-1847941831".to_string(),
     };
 
-    // update(&book, &book.isbn, &pool).await?;
+    update(&book, &pool).await?;
 
     //reading
     let read_book = read(&pool).await?;

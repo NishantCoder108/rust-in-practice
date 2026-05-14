@@ -1,0 +1,6 @@
+[package]
+name = "error-handling-exp"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
